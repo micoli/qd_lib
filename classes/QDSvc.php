@@ -76,7 +76,7 @@ class QDSvc{
 
 			switch ($output_mode){
 				case 'json' :
-					$result = json_encode($result);
+					$result = json_encode($result,JSON_PRETTY_PRINT);
 				break;
 				case 'html' :
 				break;
