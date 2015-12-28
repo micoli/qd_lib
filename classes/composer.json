@@ -1,0 +1,11 @@
+{
+	"name": "micoli/qdlib",
+	"authors": [{
+		"name": "o.michaud",
+		"email": "olivier@micoli.org"
+	}],
+	"require": {
+		"symfony/event-dispatcher" : "~2.6",
+		"symfony/stopwatch" : "~2.6"
+	}
+}
