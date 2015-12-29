@@ -27,7 +27,11 @@
 	}
 
 	function db($v){
-		if(php_sapi_name() != "cli") Header('Content-type: text/html');//$a=debug_backtrace();//var_dump($a);
+		if(php_sapi_name() != "cli") {
+			if(!headers_sent()){
+				Header('Content-type: text/html');//$a=debug_backtrace();//var_dump($a);
+			}
+		}
 		if(php_sapi_name() != "cli") print '<pre>'."\n";
 		print_r($v);
 		if(php_sapi_name() == "cli") print "\n";

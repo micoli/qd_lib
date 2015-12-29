@@ -1,9 +1,6 @@
 <?php
 //session_start();
 include 'vendor/autoload.php';
-use \Symfony\Component\EventDispatcher\EventDispatcher;
-use Symfony\Component\EventDispatcher\Debug\TraceableEventDispatcher;
-use Symfony\Component\Stopwatch\Stopwatch;
 
 class QDSvc{
 	protected static $object = array();
@@ -57,12 +54,7 @@ class QDSvc{
 			}
 
 			$withDispatch=(in_array('attachDispatcher',get_class_methods($objId)));
-
-			$globalEventDispatcher	= new EventDispatcher();
-			$traceableEventDispatcher = new TraceableEventDispatcher(
-				$globalEventDispatcher,
-				new Stopwatch()
-			);
+			$globalEventDispatcher	= new QDEventDispatcher();
 
 			self::$object[$objId]	= new $objId();
 			if($withDispatch){
@@ -97,9 +89,14 @@ class QDSvc{
 			}
 
 			$resEvent = new QDEvent($result);
-			//db($globalEventDispatcher->dispatch(self::$object[$objId]->dispatchKey.'.format',$resEvent));
+			$globalEventDispatcher->dispatch(self::$object[$objId]->dispatchKey.'.format',$resEvent);
+			/*
+			$traceableEventDispatcher = new TraceableEventDispatcher(
+				$globalEventDispatcher,
+				new Stopwatch()
+			);
 
-			/*db(array(
+			db(array(
 			'calledListeners'		=> $traceableEventDispatcher->getCalledListeners(),
 			'notCalledListeners'	=> $traceableEventDispatcher->getNotCalledListeners()
 			));*/
