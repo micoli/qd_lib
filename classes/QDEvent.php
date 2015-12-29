@@ -8,6 +8,10 @@ class QDEvent extends Event{
 		$this->data = $data;
 	}
 
+	public function setData($data=null){
+		$this->data = $data;
+	}
+
 	public function getData(){
 		return $this->data;
 	}

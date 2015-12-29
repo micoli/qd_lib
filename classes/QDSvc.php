@@ -88,8 +88,13 @@ class QDSvc{
 				$result = call_user_func(array(self::$object[$objId],$execMethodName));
 			}
 
-			$resEvent = new QDEvent($result);
-			$globalEventDispatcher->dispatch(self::$object[$objId]->dispatchKey.'.format',$resEvent);
+			/*$globalEventDispatcher->addListener('qd.services.mua.mailbox_imap.format',function($event){
+				$a=$event->getData();
+				$a['toto']=1;
+				$event->setData($a);
+			});*/
+
+			$result=$globalEventDispatcher->dispatch(self::$object[$objId]->dispatchKey.'.format',new QDEvent($result))->getData();
 			/*
 			$traceableEventDispatcher = new TraceableEventDispatcher(
 				$globalEventDispatcher,
