@@ -53,6 +53,7 @@ class QDSvc{
 				$mode='qd';
 			}
 
+
 			//\CEP_Interceptor::$debugEvents=true;
 			self::$object[$objId]	= new \CEP_Interceptor(new $objId(),isset($GLOBALS['conf']['app']['plugins'])?$GLOBALS['conf']['app']['plugins']:null);
 
