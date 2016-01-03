@@ -65,6 +65,7 @@ class QDException extends Exception
 		 */
 		public function __construct()
 		{
+				//db(func_get_args());
 				switch (func_num_args())
 				{
 						case 6 : parent::__construct(func_get_arg(1));
@@ -336,9 +337,9 @@ function exception_handler($exception)
 		}
 }
 	// Récupèrer la variable globale error_reporting, et la mettre en paramètre de la fonction
+	// L'error handler n'est pris que pour les erreurs définis dans le error_reporting
 
 	set_exception_handler("exception_handler");
-	// L'error handler n'est pris que pour les erreurs définis dans le error_reporting
 	set_error_handler("error_handler", error_reporting(E_ERROR | E_WARNING | E_PARSE ));
 
 

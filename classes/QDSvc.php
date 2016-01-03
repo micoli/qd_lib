@@ -53,20 +53,16 @@ class QDSvc{
 				$mode='qd';
 			}
 
-			$withDispatch=(in_array('attachDispatcher',get_class_methods($objId)));
-			$globalEventDispatcher	= new QDEventDispatcher();
-
-			self::$object[$objId]	= new $objId();
-			if($withDispatch){
-				self::$object[$objId]->attachDispatcher($globalEventDispatcher);
-				$globalEventDispatcher->dispatch(self::$object[$objId]->dispatchKey.'.init',new QDEvent());
-			}
+			//\CEP_Interceptor::$debugEvents=true;
+			self::$object[$objId]	= new \CEP_Interceptor(new $objId(),isset($GLOBALS['conf']['app']['plugins'])?$GLOBALS['conf']['app']['plugins']:null);
 
 			$execMethodName = ($mode=='qd'?'svc_':'pub_').$methodName;
-			if (!in_array($execMethodName,get_class_methods (get_class  (self::$object[$objId])))){
-				print 'method <b>'.$execMethodName.'</b> not in session object <b>'.$objId.'</b> of class <b>'.get_class  ($objId).'</b>';
+
+			if (!self::$object[$objId]->hasMethod($execMethodName)){
+				print 'method <b>'.$execMethodName.'</b> not in session object <b>'.$objId.'</b> of class <b>'.self::$object[$objId]->_class.'</b>';
 				return;
 			}
+
 			$output_mode = strtolower(array_key_exists_assign_default('output_mode', $_REQUEST, 'json'));
 
 			switch ($output_mode){
@@ -81,30 +77,14 @@ class QDSvc{
 				break;
 			}
 			if($mode!='qd'){
-				$globalEventDispatcher->dispatch(self::$object[$objId]->dispatchKey.'.pre',new QDEvent($_REQUEST));
-				$result = call_user_func(array(self::$object[$objId],$execMethodName),$_REQUEST);
+				$result = self::$object[$objId]->callMethod($execMethodName,array($_REQUEST));
 			}else{
-				$globalEventDispatcher->dispatch(self::$object[$objId]->dispatchKey.'.pre',new QDEvent());
-				$result = call_user_func(array(self::$object[$objId],$execMethodName));
+				$result = self::$object[$objId]->callMethod($execMethodName,array());
 			}
 
-			/*$globalEventDispatcher->addListener('qd.services.mua.mailbox_imap.format',function($event){
-				$a=$event->getData();
-				$a['toto']=1;
-				$event->setData($a);
-			});*/
-
-			$result=$globalEventDispatcher->dispatch(self::$object[$objId]->dispatchKey.'.format',new QDEvent($result))->getData();
-			/*
-			$traceableEventDispatcher = new TraceableEventDispatcher(
-				$globalEventDispatcher,
-				new Stopwatch()
-			);
-
-			db(array(
-			'calledListeners'		=> $traceableEventDispatcher->getCalledListeners(),
-			'notCalledListeners'	=> $traceableEventDispatcher->getNotCalledListeners()
-			));*/
+			if(\CEP_Interceptor::$debugEvents){
+				db(self::$object[$objId]->debug());
+			}
 
 			switch ($output_mode){
 				case 'json' :
