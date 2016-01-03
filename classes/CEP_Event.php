@@ -1,7 +1,7 @@
 <?php
 use \Symfony\Component\EventDispatcher\Event;
 
-class QDEvent extends Event{
+class CEP_Event extends Event{
 	protected $data;
 
 	public function __construct($data=null){
