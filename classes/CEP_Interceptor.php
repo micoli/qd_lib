@@ -4,6 +4,10 @@ use \Symfony\Component\EventDispatcher\EventDispatcher;
 use \Symfony\Component\EventDispatcher\Debug\TraceableEventDispatcher;
 use \Symfony\Component\Stopwatch\Stopwatch;
 
+include_once('./CEP_Event.php');
+include_once('./CEP_EventContainer.php');
+include_once('./CEP_EventDispatcher.php');
+
 class CEP_Interceptor {
 	private	$_object;
 	private	$_class;
@@ -20,6 +24,10 @@ class CEP_Interceptor {
 		$this->_object	= $object;
 		$this->_class	= get_class($object);
 		$this->_eventKey= (isset($object->dispatchKey))?$object->dispatchKey:$this->_class;
+
+		if($this->hasMethod('getInterceptorClasses')){
+			$aPluginClasses = $object->getInterceptorClasses($aPluginClasses);
+		}
 
 		$this->initEventDispatcher();
 		$this->initPlugins($aPluginClasses);
